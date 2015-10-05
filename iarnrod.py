@@ -2,7 +2,7 @@
 
 #
 # Copyright:   Conor O'Callghan 2015
-# Version:     v1.0.1
+# Version:     v1.1.0a
 # 
 # Please feel free to fork this project, modify the code and improve 
 # it on the github repo https://github.com/brioscaibriste/iarnrod 
@@ -24,6 +24,21 @@ import argparse
 import json
 import sys
 from urllib.request import urlopen
+
+# Time tuning options
+Throttling = "True"
+PollInterval = "5" # This is the status polling interval in minutes  
+
+def PollTFL(): 
+
+    if Throttling == "True":
+        print ('Now we play the waiting game')
+# check if temp file exists, if not, write it with time stamp in it, else pull time stamp
+# check time stamp vs. poll interval, if it's less than time + interval, skip it, else run and write the temp file again
+    else:
+        print ("Let's poll the TFL")
+        RawData = urlopen(TFLDataURL).readall().decode('utf8') or die("Error, failed to "
+            "retrieve the data from the TFL website")
 
 # Parse our command line argument for the line name
 parser = argparse.ArgumentParser()
@@ -60,8 +75,9 @@ TFLDataURL = "https://api.tfl.gov.uk/Line/" + Line + ("/Status?detail=False"
     "&app_id=&app_key=")
 
 # Read all the information from JSON at the specified URL
-RawData = urlopen(TFLDataURL).readall().decode('utf8') or die("Error, failed to "
-    "retrieve the data from the TFL website")
+#RawData = urlopen(TFLDataURL).readall().decode('utf8') or die("Error, failed to "
+#    "retrieve the data from the TFL website")
+PollTFL()
 TFLData = json.loads(RawData)
 
 # Sanitize the data to get the line status
