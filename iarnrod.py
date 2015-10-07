@@ -20,69 +20,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import argparse
-import json
-import sys
-from urllib.request import urlopen
+import coire
 
-# Time tuning options
+# Tuning options
 Throttling = "True"
-PollInterval = "5" # This is the status polling interval in minutes  
+PollInterval = 5 # This is the status polling interval in minutes  
+StatusOutput = "small" # You can set this to small or large and it will change the output format
 
-def PollTFL(): 
+# Parse the command line arguments
+Line = coire.ParseArgs()
 
-    if Throttling == "True":
-        print ('Now we play the waiting game')
-# check if temp file exists, if not, write it with time stamp in it, else pull time stamp
-# check time stamp vs. poll interval, if it's less than time + interval, skip it, else run and write the temp file again
-    else:
-        print ("Let's poll the TFL")
-        RawData = urlopen(TFLDataURL).readall().decode('utf8') or die("Error, failed to "
-            "retrieve the data from the TFL website")
+### Throttling
+Data = coire.Throttle(PollInterval,Throttling)
 
-# Parse our command line argument for the line name
-parser = argparse.ArgumentParser()
-parser.add_argument('--line',dest='LineName',help='Specify the London line you want to report on')
-args = parser.parse_args()
-
-# Convert the line name to lower case for easy comparison
-Line = (args.LineName)
-Line = Line.lower()
-
-if Line not in ('district','circle','victoria','central','northern',
-     'bakerloo','hammersmith-city','jubilee','metropolitan', 
-     'piccadilly','waterloo-city','dlr',):
-     print ("\nError, you have specified " + Line + " as your line. You must specify one of the following: "
-            "\n\tDistrict"
-            "\n\tCircle"
-            "\n\tVictora"
-            "\n\tCentral"
-            "\n\tNorthern"
-            "\n\tPiccadilly"
-            "\n\tBakerloo"
-            "\n\thammersmith-city"
-            "\n\twaterloo-city"
-            "\n\tDLR"
-            "\n\tMetropolitan"
-            "\n\tJubilee\n")
-     sys.exit(1)
-
-# You can set this to small or large and it will change the output format
-StatusOutput = "small"
-
-# TFL Unified API URL
-TFLDataURL = "https://api.tfl.gov.uk/Line/" + Line + ("/Status?detail=False"
-    "&app_id=&app_key=")
-
-# Read all the information from JSON at the specified URL
-#RawData = urlopen(TFLDataURL).readall().decode('utf8') or die("Error, failed to "
-#    "retrieve the data from the TFL website")
-PollTFL()
-TFLData = json.loads(RawData)
-
-# Sanitize the data to get the line status
-Scratch = (TFLData[0]['lineStatuses'])
-LineStatusData = (Scratch[0]['statusSeverityDescription'])
+# Gather the line status data
+LineStatusData = coire.RetrieveTFLData(Line)
 
 # Convert the tube line back to upper case for nice display
 Line = Line.upper()
