@@ -15,11 +15,11 @@ translated to English as iron road.
 Before you modify and use this code, you should read the TFL API rules on the
 [TFL data website](https://tfl.gov.uk/info-for/open-data-users/)
 
-# Instructions
+# Usage Instructions
 
 ## General usage
 
-** This script requires python3 ** 
+**This script requires python3** 
 
 This script is quite simple and only requires the name of the line whose status
 you are querying as an input e.g. 
@@ -50,16 +50,16 @@ This script works with i3status, though probably not as it should :[
 In order to make this work with the i3status, you should modify your 
 .i3status.conf and ensure it contains the following line
 
-'''bash
+```bash
    output_format = "i3bar"
-'''
+```
 
 In the general section of your configuration you should have somthing similar  
 to the following
 
-'''bash
+```bash
     status_command i3customstatus
-'''
+```
 
 As per the i3status documentation, you should add a wrapper accessible on your
  path which executes drawing in the i3status details alongside your script. 
