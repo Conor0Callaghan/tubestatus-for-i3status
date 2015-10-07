@@ -24,9 +24,9 @@ Before you modify and use this code, you should read the TFL API rules on the
 This script is quite simple and only requires the name of the line whose status
 you are querying as an input e.g. 
  
-'''bash
-./iarnrod --line=hammersmith-city 
-'''
+```bash
+   ./iarnrod --line=hammersmith-city 
+```
 
 You can specify any of the lines listed below as the line name
 
@@ -58,7 +58,7 @@ In the general section of your configuration you should have somthing similar
 to the following
 
 ```bash
-    status_command i3customstatus
+   status_command i3customstatus
 ```
 
 As per the i3status documentation, you should add a wrapper accessible on your
