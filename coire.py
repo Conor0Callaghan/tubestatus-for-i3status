@@ -25,7 +25,7 @@ import argparse
 import json
 import sys
 import tempfile
-from datetime import datetime
+import time
 from urllib.request import urlopen
 
 '''
@@ -45,8 +45,14 @@ def ParseArgs():
     parser.add_argument('--line',dest='LineName',help='Specify the London line you want to report on')
     args = parser.parse_args()
 
-    # Convert the line name to lower case for easy comparison
+    # Check if the value is blank
     Line = (args.LineName)
+    
+    if not Line:
+        print ("\nError, you must specify a line name! e.g. --line=district\n")
+        sys.exit(1)
+    
+    # Convert the line name to lower case for easy comparison
     Line = Line.lower()
 
     # If the line isn't in the line list, fail badly
@@ -67,7 +73,10 @@ def ParseArgs():
                 "\n\tMetropolitan"
                 "\n\tJubilee\n")
          sys.exit(1)
-     
+
+    # Convert the tube line back to upper case for nice display
+    Line = Line.upper()
+
     return Line    
 
 '''
@@ -110,26 +119,34 @@ def Throttle(PollInterval,Throttle):
     if ( Throttle == "True" ):
         print ("Throttling in progress")
 
-    TFile = tempfile.NamedTemporaryFile(suffix='dat', prefix='iarn-throttle', delete=False)
+    #TFile = tempfile.NamedTemporaryFile(suffix='irn', prefix='iarn-throttle', delete=False)
+    TFile = open('/tmp/iarn-i3-temp.tmp', 'r+')
 
     try:
-        #CurrentMinute = 26
-        CurrentMinute = datetime.now().minute
+        CurrentStamp = TFile.read()
+        #CurrentStamp = int(CurrentStamp)
+        print ("Trying to read" + CurrentStamp)
 
-    finally:
-        CurrentMinute = datetime.now().minute
+    except:
+        CurrentStamp = str(time.time()).split('.')[0]
 
-        # Get the current time stamp and write it to the temp file, but only if it doesn't exist
-        #TFile.write(CurrentMinute)
+        # Get the current time stamp and write it to the temp file
+        TFile.write(bytes(CurrentStamp, 'UTF-8'))
+        print ("attempt to write...")
 
-    TimeFile = 18
-    Remainder = CurrentMinute - TimeFile
+    TimeFile = 1445370000
+    CurrentStamp = 1111111
+    Remainder = CurrentStamp - TimeFile
+
+    # The poll interval in seconds
+    PollInterval = PollInterval * 60
+
+    print (Remainder)
+    print (PollInterval)
 
     if ( Remainder < PollInterval ):
-        print ("Not time to poll yet")
         Run = 0
     else:
-        print ("Poll that shit and rewrite the file") 
         Run = 1
 
     TFile.close()

@@ -36,9 +36,6 @@ Data = coire.Throttle(PollInterval,Throttling)
 # Gather the line status data
 LineStatusData = coire.RetrieveTFLData(Line)
 
-# Convert the tube line back to upper case for nice display
-Line = Line.upper()
-
 # Generate the status output and print
 if (StatusOutput == "small") and (LineStatusData == "Good Service"):
     print ("TFL " + Line[0] + Line[1] + Line[2] + " OK")
