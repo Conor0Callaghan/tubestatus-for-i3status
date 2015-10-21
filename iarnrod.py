@@ -2,7 +2,7 @@
 
 #
 # Copyright:   Conor O'Callghan 2015
-# Version:     v1.1.0
+# Version:     v1.1.1
 # 
 # Please feel free to fork this project, modify the code and improve 
 # it on the github repo https://github.com/brioscaibriste/iarnrod 
