@@ -44,6 +44,12 @@ You can specify any of the lines listed below as the line name
  * Metropolitan
  * Jubilee
 
+## Temporary files 
+
+This set of scripts stores temporary files in the /tmp directory, you 
+can safely delete these and re-run the script if you encounter any stale
+content or you wish to retrieve data on a different tube line. 
+
 ## i3status integration
 
 This script works with i3status, though probably not as it should :[
