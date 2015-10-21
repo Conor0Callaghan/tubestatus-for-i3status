@@ -2,7 +2,7 @@
 
 #
 # Copyright:   Conor O'Callghan 2015
-# Version:     v1.1.0a
+# Version:     v1.1.0
 # 
 # Please feel free to fork this project, modify the code and improve 
 # it on the github repo https://github.com/brioscaibriste/iarnrod 
@@ -22,16 +22,17 @@
 
 import coire
 
-# Tuning options
+# Iarnrod Tuning options
 Throttling = "True"
 PollInterval = 5 # This is the status polling interval in minutes  
 StatusOutput = "small" # You can set this to small or large and it will change the output format
+TFileName = '/tmp/iarn-i3-temp' # Where to store the timestamp file for poll throttling
 
 # Parse the command line arguments
 Line = coire.ParseArgs()
 
 ### Throttling
-Data = coire.Throttle(PollInterval,Throttling)
+Data = coire.Throttle(PollInterval,Throttling,TFileName)
 
 # Gather the line status data
 LineStatusData = coire.RetrieveTFLData(Line)

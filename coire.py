@@ -26,6 +26,7 @@ import json
 import sys
 import tempfile
 import time
+import os
 from urllib.request import urlopen
 
 '''
@@ -49,7 +50,7 @@ def ParseArgs():
     Line = (args.LineName)
     
     if not Line:
-        print ("\nError, you must specify a line name! e.g. --line=district\n")
+        print ("\nError, you must specify a line name! e.g. --line district\n")
         sys.exit(1)
     
     # Convert the line name to lower case for easy comparison
@@ -96,13 +97,13 @@ def RetrieveTFLData(Line):
     "&app_id=&app_key=")
 
     # Read all the information from JSON at the specified URL
-    #RawData = urlopen(TFLDataURL).readall().decode('utf8') or die("Error, failed to "
-    #        "retrieve the data from the TFL website")
-    #TFLData = json.loads(RawData)
+    RawData = urlopen(TFLDataURL).readall().decode('utf8') or die("Error, failed to "
+            "retrieve the data from the TFL website")
+    TFLData = json.loads(RawData)
 
     # Sanitize the data to get the line status
-    #Scratch = (TFLData[0]['lineStatuses'])
-    #LineStatusData = (Scratch[0]['statusSeverityDescription'])
+    Scratch = (TFLData[0]['lineStatuses'])
+    LineStatusData = (Scratch[0]['statusSeverityDescription'])
 
     LineStatusData = "Good Service"
     return LineStatusData
@@ -114,41 +115,43 @@ def RetrieveTFLData(Line):
  two functions at least, one for time, one for polling, returning status value
 '''
 
-def Throttle(PollInterval,Throttle):
+def Throttle(PollInterval,Throttle,TFileName):
 
-    if ( Throttle == "True" ):
-        print ("Throttling in progress")
+    # Does the temporary file exist
+    TFileStatus = os.path.isfile(TFileName)
+    
+    # Current epoch time
+    CurrentStamp = str(time.time()).split('.')[0]
 
-    #TFile = tempfile.NamedTemporaryFile(suffix='irn', prefix='iarn-throttle', delete=False)
-    TFile = open('/tmp/iarn-i3-temp.tmp', 'r+')
+    if TFileStatus: 
 
-    try:
-        CurrentStamp = TFile.read()
-        #CurrentStamp = int(CurrentStamp)
-        print ("Trying to read" + CurrentStamp)
-
-    except:
-        CurrentStamp = str(time.time()).split('.')[0]
-
+        with open(TFileName, 'r+') as TFile:
+            TimeFile = TFile.read()
+        
+        TFile.closed
+        Remainder = int(CurrentStamp) - int(TimeFile)
+    
+    else:
         # Get the current time stamp and write it to the temp file
-        TFile.write(bytes(CurrentStamp, 'UTF-8'))
-        print ("attempt to write...")
-
-    TimeFile = 1445370000
-    CurrentStamp = 1111111
-    Remainder = CurrentStamp - TimeFile
+        with open(TFileName, 'w+') as TFile:
+            TFile.write(CurrentStamp)
+      
+        TFile.closed
+ 
+        # Set the Remainder high to force the next run
+        Remainder = 1000000 
 
     # The poll interval in seconds
     PollInterval = PollInterval * 60
 
-    print (Remainder)
-    print (PollInterval)
-
+    # If the remainder is less than the poll interval don't run the command, if it isn't run the command
     if ( Remainder < PollInterval ):
         Run = 0
     else:
         Run = 1
-
-    TFile.close()
+        
+        # Set the command to run and re-write the poll time to file
+        with open(TFileName, 'w+') as TFile:
+            TFile.write(CurrentStamp)
 
     return Run
