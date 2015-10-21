@@ -2,7 +2,7 @@
 
 #
 # Copyright:   Conor O'Callghan 2015
-# Version:     v1.1.0a
+# Version:     v1.1.0
 # 
 # Please feel free to fork this project, modify the code and improve 
 # it on the github repo https://github.com/brioscaibriste/iarnrod 
@@ -90,22 +90,32 @@ status for the specified line.
 
 '''
 
-def RetrieveTFLData(Line):
+def RetrieveTFLData(Line,Run,SFileName):
 
     # TFL Unified API URL
     TFLDataURL = "https://api.tfl.gov.uk/Line/" + Line + ("/Status?detail=False"
     "&app_id=&app_key=")
 
-    # Read all the information from JSON at the specified URL
-    RawData = urlopen(TFLDataURL).readall().decode('utf8') or die("Error, failed to "
-            "retrieve the data from the TFL website")
-    TFLData = json.loads(RawData)
+    if Run: 
+        # Read all the information from JSON at the specified URL
+        RawData = urlopen(TFLDataURL).readall().decode('utf8') or die("Error, failed to "
+                "retrieve the data from the TFL website")
+        TFLData = json.loads(RawData)
 
-    # Sanitize the data to get the line status
-    Scratch = (TFLData[0]['lineStatuses'])
-    LineStatusData = (Scratch[0]['statusSeverityDescription'])
+        # Sanitize the data to get the line status
+        Scratch = (TFLData[0]['lineStatuses'])
+        LineStatusData = (Scratch[0]['statusSeverityDescription'])
+        
+        # Cache the staus in a file
+        with open(SFileName, 'w+') as SFile:
+            SFile.write(LineStatusData)
+        SFile.closed
+      
+    else:
+        with open(SFileName, 'r+') as SFile:
+            LineStatusData = SFile.read()
+        SFile.closed
 
-    LineStatusData = "Good Service"
     return LineStatusData
 
 '''
@@ -127,15 +137,14 @@ def Throttle(PollInterval,Throttle,TFileName):
 
         with open(TFileName, 'r+') as TFile:
             TimeFile = TFile.read()
-        
         TFile.closed
+        
         Remainder = int(CurrentStamp) - int(TimeFile)
     
     else:
         # Get the current time stamp and write it to the temp file
         with open(TFileName, 'w+') as TFile:
             TFile.write(CurrentStamp)
-      
         TFile.closed
  
         # Set the Remainder high to force the next run
@@ -153,5 +162,6 @@ def Throttle(PollInterval,Throttle,TFileName):
         # Set the command to run and re-write the poll time to file
         with open(TFileName, 'w+') as TFile:
             TFile.write(CurrentStamp)
+        TFile.closed
 
     return Run

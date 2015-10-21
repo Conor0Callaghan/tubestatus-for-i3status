@@ -19,7 +19,8 @@ Before you modify and use this code, you should read the TFL API rules on the
 
 ## General usage
 
-**This script requires python3** 
+  * **This script requires python3** 
+  * **This script can currently only deal with one line specified**
 
 This script is quite simple and only requires the name of the line whose status
 you are querying as an input e.g. 

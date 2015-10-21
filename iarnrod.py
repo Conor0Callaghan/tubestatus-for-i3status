@@ -27,15 +27,16 @@ Throttling = "True"
 PollInterval = 5 # This is the status polling interval in minutes  
 StatusOutput = "small" # You can set this to small or large and it will change the output format
 TFileName = '/tmp/iarn-i3-temp' # Where to store the timestamp file for poll throttling
+SFileName = '/tmp/iarn-i3-stat' # Where to store the cache of the line status
 
 # Parse the command line arguments
 Line = coire.ParseArgs()
 
-### Throttling
-Data = coire.Throttle(PollInterval,Throttling,TFileName)
+# Throttling
+Run = coire.Throttle(PollInterval,Throttling,TFileName)
 
 # Gather the line status data
-LineStatusData = coire.RetrieveTFLData(Line)
+LineStatusData = coire.RetrieveTFLData(Line,Run,SFileName)
 
 # Generate the status output and print
 if (StatusOutput == "small") and (LineStatusData == "Good Service"):
