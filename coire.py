@@ -2,7 +2,7 @@
 
 #
 # Copyright:   Conor O'Callghan 2015
-# Version:     v1.1.1
+# Version:     v1.1.2
 # 
 # Please feel free to fork this project, modify the code and improve 
 # it on the github repo https://github.com/brioscaibriste/iarnrod 
@@ -97,7 +97,7 @@ def RetrieveTFLData(Line,Run,SFileName):
     "&app_id=&app_key=")
 
     if Run: 
-        # Read all the information from JSON at the specified URL
+        # Read all the information from JSON at the specified URL, can be re-done with requests?
         RawData = urlopen(TFLDataURL).readall().decode('utf8') or die("Error, failed to "
                 "retrieve the data from the TFL website")
         TFLData = json.loads(RawData)
@@ -119,49 +119,60 @@ def RetrieveTFLData(Line,Run,SFileName):
     return LineStatusData
 
 '''
+Throttle
+
+This function takes the inputs 
+
+  PollIntervalMinutes : Polling interval in minutes
+  Throttle: 
 
  check if temp file exists, if not, write it with time stamp in it, else pull time stamp
  check time stamp vs. poll interval, if it's less than time + interval, skip it, else run and write the temp file again
  two functions at least, one for time, one for polling, returning status value
 '''
 
-def Throttle(PollInterval,Throttle,TFileName):
+def Throttle(PollIntervalMinutes,Throttling,TFileName):
 
-    # Does the temporary file exist
-    TFileStatus = os.path.isfile(TFileName)
+    if Throttling == "True":
     
-    # Current epoch time
-    CurrentStamp = str(time.time()).split('.')[0]
-
-    if TFileStatus: 
-
-        with open(TFileName, 'r+') as TFile:
-            TimeFile = TFile.read()
-        TFile.closed
+        # Current epoch time
+        CurrentStamp = str(time.time()).split('.')[0]
+    
+        # Does the temporary file exist or not
+        if os.path.isfile(TFileName): 
+    
+            # Open the temp file and read the time stamp
+            with open(TFileName, 'r+') as TFile:
+                TimeFile = TFile.read()
+            
+            Remainder = int(CurrentStamp) - int(TimeFile)
         
-        Remainder = int(CurrentStamp) - int(TimeFile)
+        else:
+            # Get the current time stamp and write it to the temp file
+            with open(TFileName, 'w+') as TFile:
+                TFile.write(CurrentStamp)
+     
+            # Set the Remainder high to force the next run
+            Remainder = 1000000 
     
-    else:
-        # Get the current time stamp and write it to the temp file
-        with open(TFileName, 'w+') as TFile:
-            TFile.write(CurrentStamp)
-        TFile.closed
- 
-        # Set the Remainder high to force the next run
-        Remainder = 1000000 
+        # If the remainder is less than the poll interval don't run the command, if it isn't run the command
+        if ( Remainder < (PollIntervalMinutes * 60) ):
+            Run = 0
+        else:
+            Run = 1
+            
+            # Set the command to run and re-write the poll time to file
+            with open(TFileName, 'w+') as TFile:
+                TFile.write(CurrentStamp)
+    
+        return Run
 
-    # The poll interval in seconds
-    PollInterval = PollInterval * 60
-
-    # If the remainder is less than the poll interval don't run the command, if it isn't run the command
-    if ( Remainder < PollInterval ):
-        Run = 0
     else:
+        # Remove the time file if it exists
+        try:
+            os.remove(TFileName)
+        except OSError:
+            pass
+
         Run = 1
-        
-        # Set the command to run and re-write the poll time to file
-        with open(TFileName, 'w+') as TFile:
-            TFile.write(CurrentStamp)
-        TFile.closed
-
-    return Run
+        return Run
