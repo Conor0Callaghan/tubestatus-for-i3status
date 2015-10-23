@@ -84,6 +84,12 @@ def ParseArgs():
 
 RetrieveTFLData
 
+Inputs: 
+
+Line      - Which line to retrieve information on  
+Run       - Should the data retrieval be run or should the cache file be used
+SFileName - The file in which to store the line status cache 
+
 This function takes the Line variable (a name of a Transport For London line 
 name) and polls the TFL API. The function then returns the current line
 status for the specified line. 
@@ -119,16 +125,20 @@ def RetrieveTFLData(Line,Run,SFileName):
     return LineStatusData
 
 '''
+
 Throttle
 
-This function takes the inputs 
+Inputs 
 
-  PollIntervalMinutes : Polling interval in minutes
-  Throttle: 
+  PollIntervalMinutes - Polling interval in minutes
+  Throttle            - Should we throttle the connection or not?
+  TFileName           - The file where the timestamp for throttling usage is stored 
 
- check if temp file exists, if not, write it with time stamp in it, else pull time stamp
- check time stamp vs. poll interval, if it's less than time + interval, skip it, else run and write the temp file again
- two functions at least, one for time, one for polling, returning status value
+This function is used to determine whether or not the next run of the retrieval of data should run.
+It retrieves the previously run time from a file in /tmp if it exists, if the file does not exist
+the run status will return as 1 and the current time stamp will be written into a new file. 
+
+If throttling is disabled, the file will be removed from /tmp and run will be set to 1. 
 '''
 
 def Throttle(PollIntervalMinutes,Throttling,TFileName):
