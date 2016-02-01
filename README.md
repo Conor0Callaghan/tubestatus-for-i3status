@@ -19,6 +19,8 @@ Before you modify and use this code, you should read the TFL API rules on the
 
 ## General usage
 
+  * **You must sign up for a free TFL API key from
+      https://api-portal.tfl.gov.uk/**
   * **This script requires python3** 
   * **This script can currently only deal with one line specified**
 
@@ -76,7 +78,7 @@ You can also find a sample script in this repository.
 
 # License
 
-Copyright Conor O'Callaghan 2015
+Copyright Conor O'Callaghan 2016
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

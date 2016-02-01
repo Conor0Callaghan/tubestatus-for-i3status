@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 
 #
-# Copyright:   Conor O'Callghan 2015
-# Version:     v1.1.2
+# Copyright:   Conor O'Callghan 2016
+# Version:     v1.1.3
 # 
 # Please feel free to fork this project, modify the code and improve 
 # it on the github repo https://github.com/brioscaibriste/iarnrod 
+#
+# Powered by TfL Open Data
  
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

@@ -1,12 +1,13 @@
 #!/usr/bin/python3
 
 #
-# Copyright:   Conor O'Callghan 2015
-# Version:     v1.1.2
+# Copyright:   Conor O'Callghan 2016
+# Version:     v1.1.3
 # 
 # Please feel free to fork this project, modify the code and improve 
 # it on the github repo https://github.com/brioscaibriste/iarnrod 
 #
+# Powered by TfL Open Data
  
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -146,8 +147,9 @@ def Throttle(PollIntervalMinutes,Throttling,TFileName):
     if Throttling == "True":
     
         # Current epoch time
-        CurrentStamp = str(time.time()).split('.')[0]
-    
+       # CurrentStamp = str(time.time()).split('.')[0]
+        CurrentStamp = int(time.time())    
+
         # Does the temporary file exist or not
         if os.path.isfile(TFileName): 
     
@@ -155,12 +157,12 @@ def Throttle(PollIntervalMinutes,Throttling,TFileName):
             with open(TFileName, 'r+') as TFile:
                 TimeFile = TFile.read()
             
-            Remainder = int(CurrentStamp) - int(TimeFile)
+            Remainder = CurrentStamp - int(TimeFile)
         
         else:
             # Get the current time stamp and write it to the temp file
-            with open(TFileName, 'w+') as TFile:
-                TFile.write(CurrentStamp)
+            with open(TFileName, 'w') as TFile:
+                TFile.write(str(CurrentStamp))
      
             # Set the Remainder high to force the next run
             Remainder = 1000000 
@@ -172,8 +174,8 @@ def Throttle(PollIntervalMinutes,Throttling,TFileName):
             Run = 1
             
             # Set the command to run and re-write the poll time to file
-            with open(TFileName, 'w+') as TFile:
-                TFile.write(CurrentStamp)
+            with open(TFileName, 'w') as TFile:
+                TFile.write(str(CurrentStamp))
     
         return Run
 
