@@ -47,3 +47,5 @@ elif StatusOutput == "small":
     print ("TFL " + Line[0] + Line[1] + Line[2] + " " + LineStatusData)
 else:
     print ("TFL " + Line + " line has " + LineStatusData)
+
+#TEST
